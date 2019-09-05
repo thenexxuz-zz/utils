@@ -1,0 +1,21 @@
+{
+    "name": "aibuy/process-id",
+    "description": "Creates PID file for single process scripts.",
+    "type": "library",
+    "version": "1.0.0",
+    "autoload": {
+        "psr-4": {
+            "AiBUY\\ProcessId\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=7.1.0"
+    },
+    "license": "GPL-2.0-only",
+    "authors": [
+        {
+            "name": "William Penton",
+            "email": "william@penton.us"
+        }
+    ]
+}
