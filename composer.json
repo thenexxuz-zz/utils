@@ -17,5 +17,8 @@
             "name": "William Penton",
             "email": "william@penton.us"
         }
-    ]
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^8"
+    }
 }
