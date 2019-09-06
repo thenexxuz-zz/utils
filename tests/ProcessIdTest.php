@@ -3,8 +3,15 @@
 use AiBUY\ProcessId\ProcessId;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \AiBUY\ProcessId\ProcessId
+ * @uses \AiBUY\ProcessId\ProcessId
+ */
 class ProcessIdTest extends TestCase
 {
+    /**
+     * @return ProcessId
+     */
     public function test__construct()
     {
         $pid = new ProcessId();
@@ -76,8 +83,10 @@ class ProcessIdTest extends TestCase
      * @depends testSetScriptName
      *
      * @return ProcessId
+     *
+     * @throws Exception
      */
-    public function testSetLock(ProcessId $pid)
+    public function testSetLockSuccess(ProcessId $pid)
     {
         $pid->setLock();
         $this->assertFileExists($pid->getPidPath() . getmyuid() . '-' . $pid->getScriptName() . '.pid');
@@ -88,7 +97,20 @@ class ProcessIdTest extends TestCase
     /**
      * @param ProcessId $pid
      *
-     * @depends testSetLock
+     * @depends testSetLockSuccess
+     *
+     * @throws Exception
+     */
+    public function testSetLockFailure(ProcessId $pid)
+    {
+        $this->expectException(\Exception::class);
+        $pid->setLock();
+    }
+
+    /**
+     * @param ProcessId $pid
+     *
+     * @depends testSetLockSuccess
      *
      * @return ProcessId
      */
