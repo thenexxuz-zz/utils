@@ -2,6 +2,8 @@
 
 Create a PID file and lock out running the script multiple times. 
 
+![PHP from Packagist](https://img.shields.io/packagist/php-v/aibuy/process-id) ![Packagist Version](https://img.shields.io/packagist/v/aibuy/process-id) ![Travis (.org)](https://img.shields.io/travis/aibuy/process-id) ![Packagist](https://img.shields.io/packagist/l/aibuy/process-id)
+
 ## Installation
 
 ```composer require aibuy/process-id```
@@ -32,6 +34,10 @@ Add the following to the end of your script.
 ```
 $pid->releaseLock();
 ```
+
+## Testing
+
+Run the tests with `vendor/bin/phpunit --coverage-html build/coverage-report`
 
 ## Contributing
 

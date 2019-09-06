@@ -2,6 +2,8 @@
 
 namespace AiBUY\ProcessId;
 
+use Exception;
+
 class ProcessId
 {
     /**
@@ -61,13 +63,14 @@ class ProcessId
     /**
      * Sets lock file to prevent from running multiple times.
      *
-     *  @return void
+     * @return void|Exception
+     *
+     * @throws Exception
      */
     public function setLock()
     {
         if($this->isRunning()) {
-            echo 'This script is already running please stop the current process before starting a new one'."\n";
-            die();
+            throw new Exception('This script is already running please stop the current process before starting a new one');
         } else {
             $this->createPid();
         }
@@ -86,8 +89,6 @@ class ProcessId
     /**
      *  Checks if process ID within PID file is still running.
      *
-     * @param $pidFileName string    Name of PID file.
-     *
      * @return boolean
      */
     public function isRunning()
@@ -103,12 +104,9 @@ class ProcessId
             exec($awkCmd,$output);
             if(is_array($output) && !empty($output)) {
                 return true;
-            } else {
-                return false;
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
