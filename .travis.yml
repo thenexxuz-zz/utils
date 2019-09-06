@@ -4,4 +4,4 @@ php:
 before_script:
  - composer self-update
  - composer install
-script: vendor/bin/phpunit --coverage-html build/coverage-report
+script: vendor/bin/phpunit --coverage-text
