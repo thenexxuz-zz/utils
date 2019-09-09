@@ -1,6 +1,6 @@
 <?php
 
-namespace AiBUY\ProcessId;
+namespace AiBUY\Utils;
 
 use Exception;
 
