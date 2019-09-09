@@ -1,5 +1,10 @@
 # AiBUY Utils
 
+[![Build Status](https://travis-ci.com/aibuy-inc/utils.svg)](https://travis-ci.com/aibuy-inc/utils)
+![PHP from Packagist](https://img.shields.io/packagist/php-v/aibuy/utils)
+![Packagist Version](https://img.shields.io/packagist/v/aibuy/utils)
+![Packagist](https://img.shields.io/packagist/l/aibuy/utils)
+
 ## Helpers
 
 A few common helpers for debugging.
@@ -35,11 +40,6 @@ echo $time->mark(); /* Total time since $time was instantiated */
 ### ProcessId
 
 Create a PID file and lock out running the script multiple times. 
-
-[![Build Status](https://travis-ci.com/aibuy-inc/process-id.svg)](https://travis-ci.com/aibuy-inc/process-id)
-![PHP from Packagist](https://img.shields.io/packagist/php-v/aibuy/process-id)
-![Packagist Version](https://img.shields.io/packagist/v/aibuy/process-id)
-![Packagist](https://img.shields.io/packagist/l/aibuy/process-id)
 
 #### Installation
 
