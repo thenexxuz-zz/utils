@@ -43,11 +43,11 @@ Create a PID file and lock out running the script multiple times.
 
 #### Installation
 
-```composer require aibuy/process-id```
+```composer require aibuy/utils```
 
 #### Usage
 
-Add `use AiBuy\ProcessId\ProcessId;` to your file.
+Add `use AiBuy\Utils\ProcessId;` to your file.
 
 Within your code add the following to the start of your script.
 ```
