@@ -38,6 +38,7 @@ function ddd(...$args)
                 border-radius: 10px;
                 border: solid silver;
                 display: block;
+                font-size: 1em;
             }
             div.ddd-header {
                 background-color: $textColor;
@@ -50,25 +51,43 @@ function ddd(...$args)
             }
             div.ddd-body {
                 padding: 10px;
+                font-family: monospace;
+            }
+            .ddd-anchor {
+                color: red;
             }
             .type {
                 font-weight: bold;
                 float: left;
             }
-            .collapsible > h4:hover {
+            .ddd-collapsible {
+                float: left;
+                display: contents;
+            }
+            .ddd-collapsible > h4:hover {
                 text-decoration: underline;
                 cursor: pointer;
             }
-            .hidden {
+            .ddd-hidden {
                 display: none;
             }
-            h4 {
+            h4.ddd-type-header {
                 display: block;
                 margin-block-start: 0;
                 margin-block-end: 0;
                 margin-inline-start: 0;
                 margin-inline-end: 0;
                 font-weight: normal;
+            }
+            ul.ddd-list {
+                padding-inline-start: 5px;
+                list-style: none;
+            }
+            .ddd-collapsible ul {
+                margin-left: 15px;
+            }
+            .ddd-object-property {
+                float: left;
             }
             </style>";
         echo '<div class="ddd-output"><div class="ddd-header">';
@@ -84,13 +103,13 @@ function ddd(...$args)
         if (isCommandLine()) {
             print_r($X);
         } else {
-            echo "<ul style='font-family: monospace;'>" . prettyPrint($X) . "</ul>";
+            echo "<ul class='ddd-list'>" . prettyPrint($X) . "</ul>";
         }
     }
     if (!isCommandLine()) {
         echo "</div></div>";
         echo "<script>
-            let nodeArray = Array.prototype.slice.call(document.querySelectorAll('span > div.collapsible > h4'));
+            let nodeArray = Array.prototype.slice.call(document.querySelectorAll('span > div.ddd-collapsible > h4'));
             
             nodeArray.forEach(_node => {
               // Go up to parent and find UL
@@ -99,7 +118,7 @@ function ddd(...$args)
               _node.addEventListener('click', ev => {
                 ev.preventDefault();
                 ev.stopPropagation();
-                elUL.classList.toggle('hidden');
+                elUL.classList.toggle('ddd-hidden');
               })
             });
             </script>";
@@ -140,23 +159,23 @@ function prettyPrint($X)
             $result .= '<strong><span style="color: inherit;">NULL</span></strong>';
             break;
         case 'array':
-            $result .= '<div class="collapsible"><h4><strong>(array)</strong> (size=' . count($X) . ')</h4> <ul class="hidden" style="list-style: none;">';
+            $result .= '<div class="ddd-collapsible"><h4 class="ddd-type-header"><strong>(array)</strong> (size=' . count($X) . ')</h4> <ul class="ddd-hidden ddd-list">';
             foreach ($X as $key => $val) {
                 $result .= "<li>$key => " . prettyPrint($val) . "</li>";
             }
             $result .= '</ul></div>';
             break;
         case 'object':
-            $result .= '<div class="collapsible"><h4><strong>(object)</strong> <i>' . get_class($X) . '()</i></h4> <ul class="hidden" style="list-style: none;">';
+            $result .= '<div class="ddd-collapsible"><h4 class="ddd-type-header"><strong>(object)</strong> <i>' . get_class($X) . '()</i></h4> <ul class="ddd-hidden ddd-list">';
             foreach ((array) $X as $key => $val) {
-                $result .= '<li><i>';
+                $result .= '<li><div class="ddd-object-property"><i>';
                 if (gettype($key) === 'string' && (strcmp(substr($key, 0, 3), chr(0).'*'.chr(0)) === 0)) {
                     $result .= 'protected ';
                     $key = substr($key, 3);
                 } else {
                     $result .= 'public';
                 }
-                $result .= "</i> '$key' => " . prettyPrint($val) . "</li>";
+                $result .= "</i> '$key' =>&nbsp;</div>" . prettyPrint($val) . "</li>";
             }
             $result .= '</ul></div>';
             break;
@@ -190,7 +209,7 @@ function turnUrlIntoAnchor($text)
             $link = 'http://'.$url[0];
         }
         // make the urls anchor tags
-        return preg_replace($reg_exUrl, '<a href="'.$link.'" title="'.$url[0].'" target="_blank">'.$url[0].'</a>', $text);
+        return preg_replace($reg_exUrl, '<a class="ddd-anchor" href="'.$link.'" title="'.$url[0].'" target="_blank">'.$url[0].'</a>', $text);
     }
     // if no urls in the text just return the text
     return $text;
