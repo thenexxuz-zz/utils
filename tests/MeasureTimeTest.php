@@ -26,6 +26,19 @@ class MeasureTimeTest extends TestCase
      *
      * @return MeasureTime
      */
+    public function testMarkIntervalWithoutMark(MeasureTime $time)
+    {
+        $this->assertEquals(8, strlen($time->markInterval()));
+        return $time;
+    }
+
+    /**
+     * @param MeasureTime $time
+     *
+     * @depends testMarkIntervalWithoutMark
+     *
+     * @return MeasureTime
+     */
     public function testMark(MeasureTime $time)
     {
         $this->assertEquals(8, strlen($time->mark()));
