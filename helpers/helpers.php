@@ -10,41 +10,12 @@ function ddd(...$args)
     $source = $trace[0];
     $file = $source['file'];
 
-    echo "Posted from: " . $file . " line:" . $source['line'] . PHP_EOL . PHP_EOL;
-
-    foreach ($args as $X) {
-        if (isCommandLine()) {
-            print_r($X);
-        } else {
-            echo "<ul style='font-family: monospace;'>" . prettyPrint($X) . "</ul>";
-        }
-    }
     if (!isCommandLine()) {
-        echo <<<JAVASCRIPT
-<script>
-let nodeArray = Array.prototype.slice.call(document.querySelectorAll("span > div.collapsible > h4"));
-
-nodeArray.forEach(_node => {
-  // Go up to parent and find UL
-  let elUL = _node.parentNode.querySelector('ul');
-
-  _node.addEventListener('click', ev => {
-    ev.preventDefault();
-    ev.stopPropagation();
-    elUL.classList.toggle('hidden')
-    // Toggle Code
-  })
-});
-
-</script>
-JAVASCRIPT;
-
         // Configurable light/dark modes
         $mode = getenv('DEBUG_COLOR_MODE') ? getenv('DEBUG_COLOR_MODE') : 'light';
         if (array_key_exists('debug_color_mode', $_GET)) {
             $mode = $_GET['debug_color_mode'];
         }
-
         switch ($mode) {
             case 'light':
                 $background = '#ffffff';
@@ -60,32 +31,78 @@ JAVASCRIPT;
                 break;
         }
 
-        echo <<<STYLE
-<style>
-html {
-    background-color: $background;
-    color: $textColor;
-}
-.type {
-    font-weight: bold;
-    float: left;
-}
-.collapsible > h4:hover {
-    text-decoration: underline;
-}
-.hidden {
-    display: none;
-}
-h4 {
-    display: block;
-    margin-block-start: 0;
-    margin-block-end: 0;
-    margin-inline-start: 0;
-    margin-inline-end: 0;
-    font-weight: normal;
-}
-</style>
-STYLE;
+        echo "<style>
+            div.ddd-output {
+                background-color: $background;
+                color: $textColor;
+                border-radius: 10px;
+                border: solid silver;
+                display: block;
+            }
+            div.ddd-header {
+                background-color: $textColor;
+                color: $background;
+                border-bottom: solid silver;
+                border-top-left-radius: 7px;
+                border-top-right-radius: 7px;
+                padding: 10px;
+                font-weight: bolder;
+            }
+            div.ddd-body {
+                padding: 10px;
+            }
+            .type {
+                font-weight: bold;
+                float: left;
+            }
+            .collapsible > h4:hover {
+                text-decoration: underline;
+                cursor: pointer;
+            }
+            .hidden {
+                display: none;
+            }
+            h4 {
+                display: block;
+                margin-block-start: 0;
+                margin-block-end: 0;
+                margin-inline-start: 0;
+                margin-inline-end: 0;
+                font-weight: normal;
+            }
+            </style>";
+        echo '<div class="ddd-output"><div class="ddd-header">';
+    }
+
+    echo "Posted from: " . $file . " line:" . $source['line'] . PHP_EOL . PHP_EOL;
+
+    if (!isCommandLine()) {
+        echo '</div><div class="ddd-body">';
+    }
+
+    foreach ($args as $X) {
+        if (isCommandLine()) {
+            print_r($X);
+        } else {
+            echo "<ul style='font-family: monospace;'>" . prettyPrint($X) . "</ul>";
+        }
+    }
+    if (!isCommandLine()) {
+        echo "</div></div>";
+        echo "<script>
+            let nodeArray = Array.prototype.slice.call(document.querySelectorAll('span > div.collapsible > h4'));
+            
+            nodeArray.forEach(_node => {
+              // Go up to parent and find UL
+              let elUL = _node.parentNode.querySelector('ul');
+            
+              _node.addEventListener('click', ev => {
+                ev.preventDefault();
+                ev.stopPropagation();
+                elUL.classList.toggle('hidden');
+              })
+            });
+            </script>";
     }
 
     terminate(1);
@@ -107,7 +124,7 @@ function prettyPrint($X)
     $result = '<span>';
     switch (gettype($X)) {
         case 'string':
-            $result .= '<strong>(string)</strong> <span style="color:red;">' . $X . '</span> <i>(length='.strlen($X).')</i>';
+            $result .= '<strong>(string)</strong> <span style="color:red;">' . turnUrlIntoAnchor($X) . '</span> <i>(length='.strlen($X).')</i>';
             break;
         case 'integer':
             $result .= '<strong>(int)</strong> <span style="color: green;">' . $X . '</span>';
@@ -159,6 +176,24 @@ function prettyPrint($X)
 function isCommandLine()
 {
     return php_sapi_name() === 'cli';
+}
+
+function turnUrlIntoAnchor($text)
+{
+    // The regex filter for URLs
+    $reg_exUrl = "/(?i)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))/";
+
+    // Check if there is a url in the text
+    if (preg_match($reg_exUrl, $text, $url)) {
+        $link = $url[0];
+        if (strpos( $url[0], ":" ) === false) {
+            $link = 'http://'.$url[0];
+        }
+        // make the urls anchor tags
+        return preg_replace($reg_exUrl, '<a href="'.$link.'" title="'.$url[0].'" target="_blank">'.$url[0].'</a>', $text);
+    }
+    // if no urls in the text just return the text
+    return $text;
 }
 
 /**
