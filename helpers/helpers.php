@@ -19,6 +19,74 @@ function ddd(...$args)
             echo "<ul style='font-family: monospace;'>" . prettyPrint($X) . "</ul>";
         }
     }
+    if (!isCommandLine()) {
+        echo <<<JAVASCRIPT
+<script>
+let nodeArray = Array.prototype.slice.call(document.querySelectorAll("span > div.collapsible > h4"));
+
+nodeArray.forEach(_node => {
+  // Go up to parent and find UL
+  let elUL = _node.parentNode.querySelector('ul');
+
+  _node.addEventListener('click', ev => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    elUL.classList.toggle('hidden')
+    // Toggle Code
+  })
+});
+
+</script>
+JAVASCRIPT;
+
+        // Configurable light/dark modes
+        $mode = getenv('DEBUG_COLOR_MODE') ? getenv('DEBUG_COLOR_MODE') : 'light';
+        if (array_key_exists('debug_color_mode', $_GET)) {
+            $mode = $_GET['debug_color_mode'];
+        }
+
+        switch ($mode) {
+            case 'light':
+                $background = '#ffffff';
+                $textColor = '#0e0e0e';
+                break;
+            case 'dark':
+                $background = '#0e0e0e';
+                $textColor = '#ffffff';
+                break;
+            default:
+                $background = ($mode === 'light')? '#ffffff' : '#0e0e0e';
+                $textColor = ($mode === 'light')? '#0e0e0e' : '#ffffff';
+                break;
+        }
+
+        echo <<<STYLE
+<style>
+html {
+    background-color: $background;
+    color: $textColor;
+}
+.type {
+    font-weight: bold;
+    float: left;
+}
+.collapsible > h4:hover {
+    text-decoration: underline;
+}
+.hidden {
+    display: none;
+}
+h4 {
+    display: block;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    font-weight: normal;
+}
+</style>
+STYLE;
+    }
 
     terminate(1);
 }
@@ -32,6 +100,10 @@ function terminate($code)
 
 function prettyPrint($X)
 {
+    if (count(debug_backtrace()) > 253) {
+        $result = '<strong><span style="color: black;">Max recursion reached.</span></strong>';
+        return $result;
+    }
     $result = '<span>';
     switch (gettype($X)) {
         case 'string':
@@ -48,17 +120,17 @@ function prettyPrint($X)
             $result .= '<strong>(boolean)</strong> <span style="color: purple;">' . ($X?'true':'false') . '</span>';
             break;
         case 'NULL':
-            $result .= '<strong><span style="color: black;">NULL</span></strong>';
+            $result .= '<strong><span style="color: inherit;">NULL</span></strong>';
             break;
         case 'array':
-            $result .= '<strong>(array)</strong> (size=' . count($X) . ') <ul style="list-style: none;">';
+            $result .= '<div class="collapsible"><h4><strong>(array)</strong> (size=' . count($X) . ')</h4> <ul class="hidden" style="list-style: none;">';
             foreach ($X as $key => $val) {
                 $result .= "<li>$key => " . prettyPrint($val) . "</li>";
             }
-            $result .= '</ul>';
+            $result .= '</ul></div>';
             break;
         case 'object':
-            $result .= '<strong>(object)</strong> <i>' . get_class($X) . '()</i> <ul style="list-style: none;">';
+            $result .= '<div class="collapsible"><h4><strong>(object)</strong> <i>' . get_class($X) . '()</i></h4> <ul class="hidden" style="list-style: none;">';
             foreach ((array) $X as $key => $val) {
                 $result .= '<li><i>';
                 if (gettype($key) === 'string' && (strcmp(substr($key, 0, 3), chr(0).'*'.chr(0)) === 0)) {
@@ -69,7 +141,7 @@ function prettyPrint($X)
                 }
                 $result .= "</i> '$key' => " . prettyPrint($val) . "</li>";
             }
-            $result .= '</ul>';
+            $result .= '</ul></div>';
             break;
         default:
             $result .= '';

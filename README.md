@@ -8,7 +8,7 @@
 ## Helpers
 
 A few common helpers for debugging.
-* `ddd` - similar to Laravel's `dd()` command but not reliant on any Laravel packages.
+* `ddd` - similar to Laravel's `dd()` command but not reliant on any Laravel packages with configurable color modes: `light`/`dark` just add environment variable `DEBUG_COLOR_MODE` or query parameter to the URL `?debug_color_mode` selecting color mode.
 * `lineNo` - just return the line number of where it was called.
 * `validGuid` - simple UUIDv4 validation.
 * `todayInDates` - pass an array of dates in `yyyy-mm-dd` format and returns true or false if today's date is in the array.
