@@ -51,13 +51,13 @@ TEXT;
 
     public function testPrettyPrintArray()
     {
-        $expected = '<span><div class="collapsible"><h4><strong>(array)</strong> (size=0)</h4> <ul class="hidden" style="list-style: none;"></ul></div></span>';
+        $expected = '<span><div class="ddd-collapsible"><h4 class="ddd-type-header"><strong>(array)</strong> (size=0)</h4> <ul class="ddd-hidden ddd-list"></ul></div></span>';
         $this->assertEquals(0, strcmp($expected, prettyPrint([])));
     }
 
     public function testPrettyPrintObject()
     {
-        $expected = '<span><div class="collapsible"><h4><strong>(object)</strong> <i>stdClass()</i></h4> <ul class="hidden" style="list-style: none;"></ul></div></span>';
+        $expected = '<span><div class="ddd-collapsible"><h4 class="ddd-type-header"><strong>(object)</strong> <i>stdClass()</i></h4> <ul class="ddd-hidden ddd-list"></ul></div></span>';
         $this->assertEquals(0, strcmp($expected, prettyPrint(new StdClass())));
     }
 
