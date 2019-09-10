@@ -45,19 +45,19 @@ TEXT;
 
     public function testPrettyPrintNull()
     {
-        $expected = '<span><strong><span style="color: black;">NULL</span></strong></span>';
+        $expected = '<span><strong><span style="color: inherit;">NULL</span></strong></span>';
         $this->assertEquals(0, strcmp($expected, prettyPrint(null)));
     }
 
     public function testPrettyPrintArray()
     {
-        $expected = '<span><strong>(array)</strong> (size=0) <ul style="list-style: none;"></ul></span>';
+        $expected = '<span><div class="collapsible"><h4><strong>(array)</strong> (size=0)</h4> <ul class="hidden" style="list-style: none;"></ul></div></span>';
         $this->assertEquals(0, strcmp($expected, prettyPrint([])));
     }
 
     public function testPrettyPrintObject()
     {
-        $expected = '<span><strong>(object)</strong> <i>stdClass()</i> <ul style="list-style: none;"></ul></span>';
+        $expected = '<span><div class="collapsible"><h4><strong>(object)</strong> <i>stdClass()</i></h4> <ul class="hidden" style="list-style: none;"></ul></div></span>';
         $this->assertEquals(0, strcmp($expected, prettyPrint(new StdClass())));
     }
 
