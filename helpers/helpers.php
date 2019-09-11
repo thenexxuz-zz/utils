@@ -89,19 +89,18 @@ function ddd(...$args)
                 
             .ddd-tooltip .ddd-tooltiptext {
                 visibility: hidden;
-                background-color: #000099;
-                color: #fff;
+                background-color: #222222;
+                color: #fffbf5;
                 border-radius: 6px;
                 padding: 5px;
                 
                 /* Position the tooltip */
                 position: absolute;
                 z-index: 1;
-                bottom: 100%;
-                left: 0%;
-            }
-                
-                .ddd-tooltip:hover .ddd-tooltiptext {
+                top: -5px;
+                left: 100%; 
+            }  
+            .ddd-tooltip:hover .ddd-tooltiptext {
                 visibility: visible;
             }
             .ddd-list {
@@ -151,7 +150,7 @@ function ddd(...$args)
     if (!isCommandLine()) {
         echo "</div></div>";
         echo "<script>
-            let nodeArray = Array.prototype.slice.call(document.querySelectorAll('.ddd-collapsible > ul h4'));
+            let nodeArray = Array.prototype.slice.call(document.querySelectorAll('.ddd-collapsible > .ddd-list h4'));
             
             nodeArray.forEach(_node => {
               // Go up to parent and find UL
