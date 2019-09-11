@@ -21,7 +21,7 @@ TEXT;
 
     public function testPrettyPrintString()
     {
-        $expected = '<span><strong>(string)</strong> <span style="color:red;">test</span> <i>(length=4)</i></span>';
+        $expected = '<span><strong>(string)</strong> <span class="ddd-type-string">test</span> <i>(length=4)</i></span>';
         $this->assertEquals(0, strcmp($expected, prettyPrint('test')));
     }
 
@@ -57,7 +57,7 @@ TEXT;
 
     public function testPrettyPrintObject()
     {
-        $expected = '<span><div class="ddd-collapsible"><h4 class="ddd-type-header"><strong>(object)</strong> <i>stdClass()</i></h4> <ul class="ddd-hidden ddd-list"></ul></div></span>';
+        $expected = '<span><div class="ddd-collapsible"><ul class="ddd-list"><h4 class="ddd-type-header ddd-tooltip"><strong>(object)&nbsp;</strong><i>stdClass()</i><div class="ddd-tooltiptext">Name: stdClass</br></br>Internal PHP Class</br>Extends: Core</div></h4><ul class="ddd-hidden ddd-list"><div class="ddd-collapsible"><h4 class="ddd-hidden ddd-type-header"><strong>Properties:</strong></h4><li><ul class="ddd-hidden ddd-list"></ul></li><div class="ddd-collapsible"><h4 class="ddd-hidden ddd-type-header"><strong>Methods:</strong></h4><ul class="ddd-hidden ddd-list"></ul></ul></ul></div></span>';
         $this->assertEquals(0, strcmp($expected, prettyPrint(new StdClass())));
     }
 
