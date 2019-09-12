@@ -66,9 +66,12 @@ function ddd(...$args)
                 float: left;
                 display: contents;
             }
-            .ddd-collapsible > h4:hover {
+            .ddd-collapsible .ddd-type-header:hover {
                 text-decoration: underline;
                 cursor: pointer;
+            }
+            .ddd-list > li {
+                margin-left: 15px;
             }
             .ddd-hidden {
                 display: none;
@@ -99,7 +102,17 @@ function ddd(...$args)
                 z-index: 1;
                 top: -5px;
                 left: 100%; 
-            }  
+            }
+            .ddd-tooltip .ddd-tooltiptext::after {
+                content: ' ';
+                position: absolute;
+                top: 50%;
+                right: 100%; /* To the left of the tooltip */
+                margin-top: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: transparent black transparent transparent;
+            }    
             .ddd-tooltip:hover .ddd-tooltiptext {
                 visibility: visible;
             }
@@ -107,7 +120,7 @@ function ddd(...$args)
                 list-style: none;
             }
             .ddd-collapsible > .ddd-list {
-                padding-inline-start: 0px;
+                padding-inline-start: 0;
             }
             .ddd-list {
                 padding-inline-start: 15px;
@@ -116,7 +129,7 @@ function ddd(...$args)
                 float: left;
             }
             .ddd-object-property {
-                margin-left: 0px;
+                margin-left: 0;
             }
             .ddd-object-method {
                 margin-left: 15px;
@@ -150,7 +163,7 @@ function ddd(...$args)
     if (!isCommandLine()) {
         echo "</div></div>";
         echo "<script>
-            let nodeArray = Array.prototype.slice.call(document.querySelectorAll('.ddd-collapsible > .ddd-list h4'));
+            let nodeArray = Array.prototype.slice.call(document.querySelectorAll('.ddd-collapsible .ddd-type-header'));
             
             nodeArray.forEach(_node => {
               // Go up to parent and find UL
@@ -211,44 +224,49 @@ function prettyPrint($X)
             $hoverText = "Name: $reflect->name</br>".($reflect->isInternal() ? '</br>Internal PHP Class':'').($reflect->getExtensionName() ? '</br>Extends: '.$reflect->getExtensionName():'').($reflect->getFileName() ? '</br>Defined: '.$reflect->getFileName():'');
             $result .= '<div class="ddd-collapsible"><ul class="ddd-list"><h4 class="ddd-type-header ddd-tooltip"><strong>(object)&nbsp;</strong><i>' . get_class($X) . '()</i><div class="ddd-tooltiptext">'.$hoverText.'</div></h4>';
             $result .= '<ul class="ddd-hidden ddd-list"><div class="ddd-collapsible"><h4 class="ddd-hidden ddd-type-header"><strong>Properties:</strong></h4><li><ul class="ddd-hidden ddd-list">';
-            foreach ($reflect->getProperties() as $property) {
 
-                $propertyHoverText = str_replace(PHP_EOL, '</br>', $property->getDocComment());
-                $result .= '<li><div class="ddd-object-property '.(($propertyHoverText!=='')?'ddd-tooltip':'').'"><i>';
-                if ($property->isProtected()) {
-                    $result .= '<div class="ddd-protected">protected&nbsp;</div>';
-                } else if ($property->isPrivate()) {
-                    $result .= '<div class="ddd-private">private&nbsp;</div>';
-                } else {
-                    $result .= '<div class="ddd-public">public&nbsp;</div>';
-                }
-                $value = null;
-                foreach ((array)$X as $key => $val) {
-                    if (($property->name === $key) || (chr(0).'*'.chr(0).$property->name === $key)) {
-                        $value = $val;
-                        break;
+            if (count($reflect->getProperties()) > 0) {
+                foreach ($reflect->getProperties() as $property) {
+
+                    $propertyHoverText = str_replace(PHP_EOL, '</br>', $property->getDocComment());
+                    $result .= '<li><div class="ddd-object-property ' . (($propertyHoverText !== '') ? 'ddd-tooltip' : '') . '"><i>';
+                    if ($property->isProtected()) {
+                        $result .= '<div class="ddd-protected">protected&nbsp;</div>';
+                    } else if ($property->isPrivate()) {
+                        $result .= '<div class="ddd-private">private&nbsp;</div>';
+                    } else {
+                        $result .= '<div class="ddd-public">public&nbsp;</div>';
                     }
+                    $value = null;
+                    foreach ((array)$X as $key => $val) {
+                        if (($property->name === $key) || (chr(0) . '*' . chr(0) . $property->name === $key)) {
+                            $value = $val;
+                            break;
+                        }
+                    }
+                    $result .= "</i> '$property->name' =>&nbsp; " . (($propertyHoverText !== '') ? "<div class='ddd-tooltiptext'>" . $propertyHoverText . "</div>" : '') . "</div>" . prettyPrint($value) . " </li>";
                 }
-                $result .= "</i> '$property->name' =>&nbsp; ".(($propertyHoverText!=='')?"<div class='ddd-tooltiptext'>".$propertyHoverText."</div>":'')."</div>" . prettyPrint($value) . " </li>";
+            } else {
+                $result .= '<li><div class="ddd-object-property"><i><div class="ddd-private">none </div> </i> </div> </li>';
             }
             $result .= '</ul></li><div class="ddd-collapsible"><h4 class="ddd-hidden ddd-type-header"><strong>Methods:</strong></h4><ul class="ddd-hidden ddd-list">';
             foreach ($reflect->getMethods() as $method) {
                 $result .= '<li><div class="ddd-object-method"><i>';
-                if ($method->isPublic())  {
+                if ($method->isPublic() && ($method->name !== ''))  {
                     $result .= '<div class="ddd-public">public&nbsp;</div>';
                     $result .= "</i>'$method->name' =>&nbsp;</div>Method</li>";
                 }
             }
             foreach ($reflect->getMethods() as $method) {
                 $result .= '<li><div class="ddd-object-method"><i>';
-                if ($method->isProtected())  {
+                if ($method->isProtected() && ($method->name !== ''))  {
                     $result .= '<div class="ddd-protected">protected&nbsp;</div> ';
                     $result .= "</i>'$method->name' =>&nbsp;</div>Method</li>";
                 }
             }
             foreach ($reflect->getMethods() as $method) {
                 $result .= '<li><div class="ddd-object-method"><i>';
-                if ($method->isPrivate())  {
+                if ($method->isPrivate() && ($method->name !== ''))  {
                     $result .= '<div class="ddd-private">private&nbsp;</div> ';
                     $result .= "</i>'$method->name' =>&nbsp;</div>Method</li>";
                 }
