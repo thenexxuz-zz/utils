@@ -16,18 +16,52 @@ function ddd(...$args)
         if (array_key_exists('debug_color_mode', $_GET)) {
             $mode = $_GET['debug_color_mode'];
         }
+        $white = '#ffffff';
+        $black = '#000000';
+        $darkGray = '#0e0e0e';
+        $red = '#ff0000';
+        $green = '#00ff00';
+        $blue = '#ff00ff';
+        $brown = '#a52a2a';
+        $purple = '#800080';
+        $orange = '#ffa500';
+
         switch ($mode) {
             case 'light':
-                $background = '#ffffff';
-                $textColor = '#0e0e0e';
+                $background = $white;
+                $textColor = $darkGray;
+                $typeString = $red;
+                $typeInteger = $green;
+                $typeDouble = $brown;
+                $typeBoolean = $purple;
+                $arrayEmpty = $red;
+                $visibilityPublic = $green;
+                $visibilityProtected = $orange;
+                $visibilityPrivate = $red;
                 break;
             case 'dark':
-                $background = '#0e0e0e';
-                $textColor = '#ffffff';
+                $background = $darkGray;
+                $textColor = $white;
+                $typeString = $red;
+                $typeInteger = $green;
+                $typeDouble = $brown;
+                $typeBoolean = $purple;
+                $arrayEmpty = $red;
+                $visibilityPublic = $green;
+                $visibilityProtected = $orange;
+                $visibilityPrivate = $red;
                 break;
             default:
-                $background = ($mode === 'light')? '#ffffff' : '#0e0e0e';
-                $textColor = ($mode === 'light')? '#0e0e0e' : '#ffffff';
+                $background = ($mode === 'dark') ? $darkGray : $white;
+                $textColor = ($mode === 'dark') ? $white : $darkGray;
+                $typeString = $red;
+                $typeInteger = $green;
+                $typeDouble = $brown;
+                $typeBoolean = $purple;
+                $arrayEmpty = $red;
+                $visibilityPublic = $green;
+                $visibilityProtected = $orange;
+                $visibilityPrivate = $red;
                 break;
         }
 
@@ -95,31 +129,27 @@ function ddd(...$args)
             .ddd-value {
                 background-color: inherit;
             }
-            .ddd-anchor {
-                color: red;
-            }
             .ddd-type {
                 color: $textColor;
                 font-weight: bold;
             }
             .ddd-type-string {
-                color: red;
+                color: $typeString;
+            }
+            .ddd-anchor {
+                color: $typeString;
             }
             .ddd-type-integer {
-                color: green;
-​
+                color: $typeInteger;
             }
             .ddd-type-double {
-                color: brown;
-​
+                color: $typeDouble;
             }
             .ddd-type-boolean {
-                color: purple;
-​
+                color: $typeBoolean;
             }
             .ddd-type-null {
                 color: $textColor;
-​
             }
             .ddd-type-array {
                 display: block;
@@ -131,7 +161,6 @@ function ddd(...$args)
                 color: $textColor;
                 margin-left: 15px;
                 display: block;
-​
             }
             .ddd-array-key {
                 color: $textColor;
@@ -145,16 +174,16 @@ function ddd(...$args)
             .ddd-info {
             }
             .ddd-array-empty {
-                color: red;
+                color: $arrayEmpty;
             }
             .ddd-public {
-                color: green;
+                color: $visibilityPublic;
             }
             .ddd-protected {
-                color: orange;
+                color: $visibilityProtected;
             }
             .ddd-private {
-                color: red;
+                color: $visibilityPrivate;
             }
             .ddd-object-properties, .ddd-object-methods {
                 display: block;
@@ -194,6 +223,9 @@ function ddd(...$args)
             }
             .ddd-hidden {
                 display: none;
+            }
+            .ddd-max-recursion {
+                color: $textColor;
             }
             </style>";
         echo '<div class="ddd-output"><div class="ddd-header">';
@@ -254,7 +286,7 @@ function prettyPrint($X)
 {
     $result = '';
     if (count(debug_backtrace()) > 253) {
-        $result = '<strong><span style="color: black;">Max recursion reached.</span></strong>';
+        $result = '<div class="ddd-max-recursion">Max recursion reached.</div>';
         return $result;
     }
     switch (gettype($X)) {
