@@ -16,23 +16,84 @@ function ddd(...$args)
         if (array_key_exists('debug_color_mode', $_GET)) {
             $mode = $_GET['debug_color_mode'];
         }
+        $white = '#ffffff';
+        $black = '#000000';
+        $darkGray = '#0e0e0e';
+        $red = '#ff0000';
+        $green = '#00ff00';
+        $blue = '#ff00ff';
+        $brown = '#a52a2a';
+        $purple = '#800080';
+        $orange = '#ffa500';
+
         switch ($mode) {
             case 'light':
-                $background = '#ffffff';
-                $textColor = '#0e0e0e';
+                $background = $white;
+                $textColor = $darkGray;
+                $typeString = $red;
+                $typeInteger = $green;
+                $typeDouble = $brown;
+                $typeBoolean = $purple;
+                $arrayEmpty = $red;
+                $visibilityPublic = $green;
+                $visibilityProtected = $orange;
+                $visibilityPrivate = $red;
                 break;
             case 'dark':
-                $background = '#0e0e0e';
-                $textColor = '#ffffff';
+                $background = $darkGray;
+                $textColor = $white;
+                $typeString = $red;
+                $typeInteger = $green;
+                $typeDouble = $brown;
+                $typeBoolean = $purple;
+                $arrayEmpty = $red;
+                $visibilityPublic = $green;
+                $visibilityProtected = $orange;
+                $visibilityPrivate = $red;
                 break;
             default:
-                $background = ($mode === 'light')? '#ffffff' : '#0e0e0e';
-                $textColor = ($mode === 'light')? '#0e0e0e' : '#ffffff';
+                $background = ($mode === 'dark') ? $darkGray : $white;
+                $textColor = ($mode === 'dark') ? $white : $darkGray;
+                $typeString = $red;
+                $typeInteger = $green;
+                $typeDouble = $brown;
+                $typeBoolean = $purple;
+                $arrayEmpty = $red;
+                $visibilityPublic = $green;
+                $visibilityProtected = $orange;
+                $visibilityPrivate = $red;
                 break;
         }
 
         echo "<style>
-            div.ddd-output {
+            .ddd-info,
+            .ddd-value,
+            .ddd-item,
+            .ddd-arrow,
+            .ddd-method-name,
+            .ddd-public,
+            .ddd-protected,
+            .ddd-private,
+            .ddd-array-key,
+            .ddd-object-method-name,
+            .ddd-object-method-params,
+            .ddd-object-method-visibility,
+            .ddd-object-property-name,
+            .ddd-object-property-visibility,
+            .ddd-type,
+            .ddd-type-integer,
+            .ddd-type-string,
+            .ddd-type-double,
+            .ddd-type-object,
+            .ddd-type-array,
+            .ddd-type-boolean,
+            .ddd-type-null,
+            .ddd-type-member,
+            .ddd-type-key {
+                display: inline-block;
+                vertical-align: top;
+            }
+            .ddd-output {
                 background-color: $background;
                 color: $textColor;
                 border-radius: 10px;
@@ -40,7 +101,7 @@ function ddd(...$args)
                 display: block;
                 font-size: 1em;
             }
-            div.ddd-header {
+            .ddd-header {
                 background-color: $textColor;
                 color: $background;
                 border-bottom: solid silver;
@@ -49,87 +110,122 @@ function ddd(...$args)
                 padding: 10px;
                 font-weight: bolder;
             }
-            div.ddd-body {
+            .ddd-body {
+                display: block;
                 padding: 10px;
                 font-family: monospace;
+                overflow: auto;
+                background-color: inherit;
             }
-            .ddd-anchor {
-                color: red;
+            .ddd-args {
+                display: block;
+                margin-bottom: 10px;
+                background-color: inherit;
             }
-            .ddd-type-array {
-                color: blue;
+            .ddd-item {
+                color: $textColor;
+                background-color: inherit;
+            }
+            .ddd-value {
+                background-color: inherit;
+            }
+            .ddd-type {
+                color: $textColor;
+                font-weight: bold;
             }
             .ddd-type-string {
-                color: red;
+                color: $typeString;
             }
-            .ddd-collapsible {
-                float: left;
-                display: contents;
+            .ddd-anchor {
+                color: $typeString;
             }
-            .ddd-collapsible > h4:hover {
+            .ddd-type-integer {
+                color: $typeInteger;
+            }
+            .ddd-type-double {
+                color: $typeDouble;
+            }
+            .ddd-type-boolean {
+                color: $typeBoolean;
+            }
+            .ddd-type-null {
+                color: $textColor;
+            }
+            .ddd-type-array {
+                display: block;
+            }
+            .ddd-type-object {
+                display: block;
+            }
+            .ddd-array-member {
+                color: $textColor;
+                margin-left: 15px;
+                display: block;
+            }
+            .ddd-array-key {
+                color: $textColor;
+            }
+            .ddd-arrow {
+                color: $textColor;
+            }
+            .ddd-arrow:after {
+                content: ' \\2192';
+            }
+            .ddd-info {
+            }
+            .ddd-array-empty {
+                color: $arrayEmpty;
+            }
+            .ddd-public {
+                color: $visibilityPublic;
+            }
+            .ddd-protected {
+                color: $visibilityProtected;
+            }
+            .ddd-private {
+                color: $visibilityPrivate;
+            }
+            .ddd-object-properties, .ddd-object-methods {
+                display: block;
+                margin-left: 15px;
+            }
+            .ddd-object-property, .ddd-object-method {
+                display: block;
+                margin-left: 15px;
+            }
+            .ddd-type,
+            .ddd-info,
+            .ddd-type-integer,
+            .ddd-type-string,
+            .ddd-type-double,
+            .ddd-type-object,
+            .ddd-type-array,
+            .ddd-type-boolean,
+            .ddd-type-null,
+            .ddd-arrow,
+            .ddd-array-key,
+            .ddd-object-property-visibility,
+            .ddd-object-method-visibility,
+            .ddd-object-property-name {
+                margin-right: .5rem;
+            }
+            .ddd-item-header {
+                text-decoration: none;
+                background-color: inherit;
+            }
+            .ddd-object-title:hover,  .ddd-item-header:hover {
                 text-decoration: underline;
                 cursor: pointer;
+            }
+            .ddd-type, .ddd-info {
+                text-decoration: inherit;
+                background-color: inherit;
             }
             .ddd-hidden {
                 display: none;
             }
-            h4.ddd-type-header {
-                margin-block-start: 0;
-                margin-block-end: 0;
-                margin-inline-start: 0;
-                margin-inline-end: 0;
-                font-weight: normal;
-                position: relative;
-                display: inline-block;
-            }
-            .ddd-tooltip {
-                position: relative;
-                display: inline-block;
-            }
-                
-            .ddd-tooltip .ddd-tooltiptext {
-                visibility: hidden;
-                background-color: #000099;
-                color: #fff;
-                border-radius: 6px;
-                padding: 5px;
-                
-                /* Position the tooltip */
-                position: absolute;
-                z-index: 1;
-                bottom: 100%;
-                left: 0%;
-            }
-                
-                .ddd-tooltip:hover .ddd-tooltiptext {
-                visibility: visible;
-            }
-            .ddd-list {
-                list-style: none;
-            }
-            .ddd-collapsible > .ddd-list {
-                padding-inline-start: 0px;
-            }
-            .ddd-list {
-                padding-inline-start: 15px;
-            }
-            .ddd-public, .ddd-protected, .ddd-private, .ddd-object-property, .ddd-object-method {
-                float: left;
-            }
-            .ddd-object-property {
-                margin-left: 0px;
-            }
-            .ddd-object-method {
-                margin-left: 15px;
-            }
-            .ddd-public {
-                color: green;
-            }
-            .ddd-protected {
-                color: orange;
-            }
-            .ddd-private {
-                color: red;
+            .ddd-max-recursion {
+                color: $textColor;
             }
             </style>";
         echo '<div class="ddd-output"><div class="ddd-header">';
@@ -145,24 +241,34 @@ function ddd(...$args)
         if (isCommandLine()) {
             print_r($X);
         } else {
-            echo "<ul class='ddd-list'>" . prettyPrint($X) . "</ul>";
+            echo "<div class='ddd-args'>" . prettyPrint($X) . "</div>";
         }
     }
     if (!isCommandLine()) {
         echo "</div></div>";
         echo "<script>
-            let nodeArray = Array.prototype.slice.call(document.querySelectorAll('.ddd-collapsible > ul h4'));
-            
-            nodeArray.forEach(_node => {
-              // Go up to parent and find UL
-              let elUL = _node.parentNode.querySelector('ul');
-            
-              _node.addEventListener('click', ev => {
-                ev.preventDefault();
-                ev.stopPropagation();
-                elUL.classList.toggle('ddd-hidden');
-              })
-            });
+                let _itemHeaders = document.querySelectorAll('.ddd-item-header, .ddd-object-title');
+                _itemHeaders.forEach(_itemHeader => {
+                    _itemHeader.addEventListener('click', () => {
+                        let cssSelector = '.' + _itemHeader.classList.value.split(' ').join('.');
+                        let _collapsibles = [].slice.call(_itemHeader.parentNode.querySelectorAll(`.ddd-collapsible:not(\${cssSelector})`)).filter((_item) => {
+                            return _item.parentNode === _itemHeader.parentNode;
+                        });
+                        if (_collapsibles && _collapsibles.length) {
+                            _collapsibles.forEach(_collapsible => {
+                                if (_collapsible && _collapsible.classList) {
+                                    if (_collapsible.classList.contains('ddd-collapsible')) {
+                                        if (_collapsible.classList.contains('ddd-hidden')) {
+                                            _collapsible.classList.remove('ddd-hidden');
+                                        } else {
+                                            _collapsible.classList.add('ddd-hidden');
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
+                });
             </script>";
     }
 
@@ -178,88 +284,122 @@ function terminate($code)
 
 function prettyPrint($X)
 {
+    $result = '';
     if (count(debug_backtrace()) > 253) {
-        $result = '<strong><span style="color: black;">Max recursion reached.</span></strong>';
+        $result = '<div class="ddd-max-recursion">Max recursion reached.</div>';
         return $result;
     }
-    $result = '<span>';
     switch (gettype($X)) {
         case 'string':
-            $result .= '<strong>(string)</strong> <span class="ddd-type-string">' . turnUrlIntoAnchor($X) . '</span> <i>(length='.strlen($X).')</i>';
+            $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(string)</div><div class="ddd-type-string">' . turnUrlIntoAnchor($X) . '</div><div class="ddd-info">(length='.strlen($X).')</div></div></div>';
             break;
         case 'integer':
-            $result .= '<strong>(int)</strong> <span style="color: green;">' . $X . '</span>';
+            $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(int)</div><div class="ddd-type-integer">' . $X . '</div></div></div>';
             break;
         case 'double':
         case 'float':
-            $result .= '<strong>(double)</strong> <span style="color: brown;">' . $X . '</span>';
+            $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(double)</div><div class="ddd-type-double">' . $X . '</div></div></div>';
             break;
         case 'boolean':
-            $result .= '<strong>(boolean)</strong> <span style="color: purple;">' . ($X?'true':'false') . '</span>';
+            $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(boolean)</div><div class="ddd-type-boolean">' . ($X?'true':'false') . '</div></div></div>';
             break;
         case 'NULL':
-            $result .= '<strong><span style="color: inherit;">NULL</span></strong>';
+            $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type-null">NULL</div></div></div>';
             break;
         case 'array':
-            $result .= '<div class="ddd-collapsible"><h4 class="ddd-type-header"><strong>(array)</strong> (size=' . count($X) . ')</h4> <ul class="ddd-hidden ddd-list">';
-            foreach ($X as $key => $val) {
-                $result .= "<li>$key => " . prettyPrint($val) . "</li>";
+            $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(array)</div><div class="ddd-info">(size=' . count($X) . ')</div></div><div class="ddd-type-array ddd-collapsible ddd-hidden">';
+            if (count($X) > 0) {
+                foreach ($X as $key => $val) {
+                    $result .= "<div class='ddd-array-member ddd-collapsible'><div class='ddd-array-key'>$key</div><div class='ddd-arrow'></div>" . prettyPrint($val) . "</div>";
+                }
+            } else {
+                $result .= "<div class='ddd-array-member'><div class='ddd-array-empty'>Empty Array</div></div>";
             }
-            $result .= '</ul></div>';
+            $result .= '</div></div></div>';
             break;
         case 'object':
             $reflect = new ReflectionClass(get_class($X));
             $hoverText = "Name: $reflect->name</br>".($reflect->isInternal() ? '</br>Internal PHP Class':'').($reflect->getExtensionName() ? '</br>Extends: '.$reflect->getExtensionName():'').($reflect->getFileName() ? '</br>Defined: '.$reflect->getFileName():'');
-            $result .= '<div class="ddd-collapsible"><ul class="ddd-list"><h4 class="ddd-type-header ddd-tooltip"><strong>(object)&nbsp;</strong><i>' . get_class($X) . '()</i><div class="ddd-tooltiptext">'.$hoverText.'</div></h4>';
-            $result .= '<ul class="ddd-hidden ddd-list"><div class="ddd-collapsible"><h4 class="ddd-hidden ddd-type-header"><strong>Properties:</strong></h4><li><ul class="ddd-hidden ddd-list">';
-            foreach ($reflect->getProperties() as $property) {
 
-                $propertyHoverText = str_replace(PHP_EOL, '</br>', $property->getDocComment());
-                $result .= '<li><div class="ddd-object-property '.(($propertyHoverText!=='')?'ddd-tooltip':'').'"><i>';
-                if ($property->isProtected()) {
-                    $result .= '<div class="ddd-protected">protected&nbsp;</div>';
-                } else if ($property->isPrivate()) {
-                    $result .= '<div class="ddd-private">private&nbsp;</div>';
-                } else {
-                    $result .= '<div class="ddd-public">public&nbsp;</div>';
-                }
-                $value = null;
-                foreach ((array)$X as $key => $val) {
-                    if (($property->name === $key) || (chr(0).'*'.chr(0).$property->name === $key)) {
-                        $value = $val;
-                        break;
+            $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(object)</div><div class="ddd-info">' . get_class($X) . '()</div></div><div class="ddd-type-object ddd-collapsible ddd-hidden">';
+
+            $result .= '<div class="ddd-object-properties"><div class="ddd-object-title">Properties:</div>';
+            if (count($reflect->getProperties()) > 0) {
+                foreach ($reflect->getProperties() as $property) {
+                    //$propertyHoverText = str_replace(PHP_EOL, '</br>', $property->getDocComment());
+                    $result .= '<div class="ddd-object-property ddd-collapsible ddd-hidden"><div class="ddd-object-property-visibility">';
+                    if ($property->isPublic()) {
+                        $result .= '<div class="ddd-public">public</div>';
+                    } else if ($property->isProtected()) {
+                        $result .= '<div class="ddd-protected">protected</div>';
+                    } else {
+                        $result .= '<div class="ddd-private">private</div>';
                     }
+                    $result .= '</div>';
+                    $value = null;
+                    foreach ((array)$X as $key => $val) {
+                        if (($property->name === $key) || (chr(0) . '*' . chr(0) . $property->name === $key)) {
+                            $value = $val;
+                            break;
+                        }
+                    }
+                    $result .= "<div class='ddd-object-property-name'>$property->name</div><div class='ddd-arrow'></div>" . prettyPrint($value);
+                    $result .= '</div>';
                 }
-                $result .= "</i> '$property->name' =>&nbsp; ".(($propertyHoverText!=='')?"<div class='ddd-tooltiptext'>".$propertyHoverText."</div>":'')."</div>" . prettyPrint($value) . " </li>";
+            } else {
+                $result .= '<div class="ddd-object-property ddd-collapsible ddd-hidden">none</div>';
             }
-            $result .= '</ul></li><div class="ddd-collapsible"><h4 class="ddd-hidden ddd-type-header"><strong>Methods:</strong></h4><ul class="ddd-hidden ddd-list">';
+            $result .= '</div>';
+
+            $result .= '<div class="ddd-object-methods"><div class="ddd-object-title">Methods:</div>';
             foreach ($reflect->getMethods() as $method) {
-                $result .= '<li><div class="ddd-object-method"><i>';
-                if ($method->isPublic())  {
-                    $result .= '<div class="ddd-public">public&nbsp;</div>';
-                    $result .= "</i>'$method->name' =>&nbsp;</div>Method</li>";
+                if ($method->isPublic() && ($method->name !== ''))  {
+                    $params = $method->getParameters();
+                    usort($params, function($a, $b) {
+                        return $a->getPosition() > $b->getPosition();
+                    });
+                    $parameters = [];
+                    foreach ($params as $param) {
+                        $parameters[] = $param->getName();
+                    }
+                    $parameters = implode(', ', $parameters);
+                    $result .= "<div class='ddd-object-method ddd-collapsible ddd-hidden'><div class='ddd-object-method-visibility'><div class='ddd-public'>public</div></div><div class='ddd-object-method-name'>$method->name</div><div class='ddd-object-method-params'>($parameters)</div></div>";
                 }
             }
             foreach ($reflect->getMethods() as $method) {
-                $result .= '<li><div class="ddd-object-method"><i>';
-                if ($method->isProtected())  {
-                    $result .= '<div class="ddd-protected">protected&nbsp;</div> ';
-                    $result .= "</i>'$method->name' =>&nbsp;</div>Method</li>";
+                if ($method->isProtected() && ($method->name !== ''))  {
+                    $params = $method->getParameters();
+                    usort($params, function($a, $b) {
+                        return $a->getPosition() > $b->getPosition();
+                    });
+                    $parameters = [];
+                    foreach ($params as $param) {
+                        $parameters[] = $param->getName();
+                    }
+                    $parameters = implode(', ', $parameters);
+                    $result .= "<div class='ddd-object-method ddd-hidden'><div class='ddd-object-method-visibility'><div class='ddd-protected'>protected</div></div><div class='ddd-object-method-name'>$method->name</div><div class='ddd-object-method-params'>($parameters)</div></div>";
                 }
             }
             foreach ($reflect->getMethods() as $method) {
-                $result .= '<li><div class="ddd-object-method"><i>';
-                if ($method->isPrivate())  {
-                    $result .= '<div class="ddd-private">private&nbsp;</div> ';
-                    $result .= "</i>'$method->name' =>&nbsp;</div>Method</li>";
+                if ($method->isPrivate() && ($method->name !== ''))  {
+                    $params = $method->getParameters();
+                    usort($params, function($a, $b) {
+                        return $a->getPosition() > $b->getPosition();
+                    });
+                    $parameters = [];
+                    foreach ($params as $param) {
+                        $parameters[] = $param->getName();
+                    }
+                    $parameters = implode(', ', $parameters);
+                    $result .= "<div class='ddd-object-method ddd-hidden'><div class='ddd-object-method-visibility'><div class='ddd-private'>private</div></div><div class='ddd-object-method-name'>$method->name</div><div class='ddd-object-method-params'>($parameters)</div></div>";
                 }
             }
-            $result .= '</ul></ul></ul></div>';
+
+            $result .= '</div></div></div></div>';
             break;
         default:
             $result .= '';
     }
-    $result .= '</span>';
 
     return $result;
 }
