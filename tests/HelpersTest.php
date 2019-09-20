@@ -21,43 +21,43 @@ TEXT;
 
     public function testPrettyPrintString()
     {
-        $expected = '<span><strong>(string)</strong> <span class="ddd-type-string">test</span> <i>(length=4)</i></span>';
+        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(string)</div><div class="ddd-type-string">test</div><div class="ddd-info">(length=4)</div></div></div>';
         $this->assertEquals(0, strcmp($expected, prettyPrint('test')));
     }
 
     public function testPrettyPrintInteger()
     {
-        $expected = '<span><strong>(int)</strong> <span style="color: green;">1</span></span>';
+        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(int)</div><div class="ddd-type-integer">1</div></div></div>';
         $this->assertEquals(0, strcmp($expected, prettyPrint(1)));
     }
 
     public function testPrettyPrintDoubleFloat()
     {
-        $expected = '<span><strong>(double)</strong> <span style="color: brown;">1</span></span>';
+        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(double)</div><div class="ddd-type-double">1</div></div></div>';
         $this->assertEquals(0, strcmp($expected, prettyPrint(1.0)));
     }
 
     public function testPrettyPrintBoolean()
     {
-        $expected = '<span><strong>(boolean)</strong> <span style="color: purple;">true</span></span>';
+        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(boolean)</div><div class="ddd-type-boolean">true</div></div></div>';
         $this->assertEquals(0, strcmp($expected, prettyPrint(true)));
     }
 
     public function testPrettyPrintNull()
     {
-        $expected = '<span><strong><span style="color: inherit;">NULL</span></strong></span>';
+        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type-null">NULL</div></div></div>';
         $this->assertEquals(0, strcmp($expected, prettyPrint(null)));
     }
 
     public function testPrettyPrintArray()
     {
-        $expected = '<span><div class="ddd-collapsible"><h4 class="ddd-type-header"><strong>(array)</strong> (size=0)</h4> <ul class="ddd-hidden ddd-list"></ul></div></span>';
+        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(array)</div><div class="ddd-info">(size=0)</div></div><div class="ddd-type-array ddd-collapsible ddd-hidden"><div class=\'ddd-array-member\'><div class=\'ddd-array-empty\'>Empty Array</div></div></div></div></div>';
         $this->assertEquals(0, strcmp($expected, prettyPrint([])));
     }
 
     public function testPrettyPrintObject()
     {
-        $expected = '<span><div class="ddd-collapsible"><ul class="ddd-list"><h4 class="ddd-type-header ddd-tooltip"><strong>(object)&nbsp;</strong><i>stdClass()</i><div class="ddd-tooltiptext">Name: stdClass</br></br>Internal PHP Class</br>Extends: Core</div></h4><ul class="ddd-hidden ddd-list"><div class="ddd-collapsible"><h4 class="ddd-hidden ddd-type-header"><strong>Properties:</strong></h4><li><ul class="ddd-hidden ddd-list"></ul></li><div class="ddd-collapsible"><h4 class="ddd-hidden ddd-type-header"><strong>Methods:</strong></h4><ul class="ddd-hidden ddd-list"></ul></ul></ul></div></span>';
+        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(object)</div><div class="ddd-info">stdClass()</div></div><div class="ddd-type-object ddd-collapsible ddd-hidden"><div class="ddd-object-properties"><div class="ddd-object-title">Properties:</div><div class="ddd-object-property ddd-collapsible ddd-hidden">none</div></div><div class="ddd-object-methods"><div class="ddd-object-title">Methods:</div></div></div></div></div>';
         $this->assertEquals(0, strcmp($expected, prettyPrint(new StdClass())));
     }
 
