@@ -12,33 +12,43 @@ function ddd(...$args)
 
     if (!isCommandLine()) {
         // Configurable light/dark modes
-        $mode = getenv('DEBUG_COLOR_MODE') ? getenv('DEBUG_COLOR_MODE') : 'light';
+        $mode = getenv('DEBUG_COLOR_MODE') ? getenv('DEBUG_COLOR_MODE') : 'dark';
         if (array_key_exists('debug_color_mode', $_GET)) {
             $mode = $_GET['debug_color_mode'];
         }
         $white = '#ffffff';
         $black = '#000000';
+        $veryLightGray = '#f2f2f2';
+        $lightGray = '#908e8f';
+        $gray = '#5d5d5d';
         $darkGray = '#0e0e0e';
         $red = '#ff0000';
         $green = '#00ff00';
-        $blue = '#ff00ff';
+        $blue = '#0000ff';
         $brown = '#a52a2a';
         $purple = '#800080';
-        $orange = '#ffa500';
+        $orange = '#fc9867';
+        $yellow = '#ffd866';
+        $pink = '#ff6188';
+        $lime = '#a9dc76';
+        $lightBlue = '#78dce8';
+        $lavender = '#ab9df2';
 
         switch ($mode) {
             case 'light':
-                $background = $white;
+                $background = $veryLightGray;
                 $textColor = $darkGray;
                 $typeString = $red;
-                $typeInteger = $green;
+                $typeInteger = $blue;
                 $typeDouble = $brown;
                 $typeBoolean = $purple;
                 $arrayEmpty = $red;
-                $visibilityPublic = $green;
+                $visibilityPublic = $blue;
                 $visibilityProtected = $orange;
                 $visibilityPrivate = $red;
+                $info = $textColor;
                 break;
+            default:
             case 'dark':
                 $background = $darkGray;
                 $textColor = $white;
@@ -50,18 +60,20 @@ function ddd(...$args)
                 $visibilityPublic = $green;
                 $visibilityProtected = $orange;
                 $visibilityPrivate = $red;
+                $info = $lightGray;
                 break;
-            default:
-                $background = ($mode === 'dark') ? $darkGray : $white;
-                $textColor = ($mode === 'dark') ? $white : $darkGray;
-                $typeString = $red;
-                $typeInteger = $green;
-                $typeDouble = $brown;
+            case 'monokai':
+                $background = $darkGray;
+                $textColor = $white;
+                $typeString = $green;
+                $typeInteger = $yellow;
+                $typeDouble = $lavender;
                 $typeBoolean = $purple;
                 $arrayEmpty = $red;
                 $visibilityPublic = $green;
                 $visibilityProtected = $orange;
                 $visibilityPrivate = $red;
+                $info = $lavender;
                 break;
         }
 
@@ -172,6 +184,7 @@ function ddd(...$args)
                 content: ' \\2192';
             }
             .ddd-info {
+                color: $info;
             }
             .ddd-array-empty {
                 color: $arrayEmpty;
@@ -183,6 +196,12 @@ function ddd(...$args)
                 color: $visibilityProtected;
             }
             .ddd-private {
+                color: $visibilityPrivate;
+            }
+            .ddd-abstract {
+                color: $visibilityProtected;
+            }
+            .ddd-static {
                 color: $visibilityPrivate;
             }
             .ddd-object-properties, .ddd-object-methods {
@@ -353,48 +372,32 @@ function prettyPrint($X)
 
             $result .= '<div class="ddd-object-methods"><div class="ddd-object-title">Methods:</div>';
             foreach ($reflect->getMethods() as $method) {
-                if ($method->isPublic() && ($method->name !== ''))  {
-                    $params = $method->getParameters();
-                    usort($params, function($a, $b) {
-                        return $a->getPosition() > $b->getPosition();
-                    });
-                    $parameters = [];
-                    foreach ($params as $param) {
-                        $parameters[] = $param->getName();
-                    }
-                    $parameters = implode(', ', $parameters);
-                    $result .= "<div class='ddd-object-method ddd-collapsible ddd-hidden'><div class='ddd-object-method-visibility'><div class='ddd-public'>public</div></div><div class='ddd-object-method-name'>$method->name</div><div class='ddd-object-method-params'>($parameters)</div></div>";
+                $params = $method->getParameters();
+                usort($params, function($a, $b) {
+                    return $a->getPosition() > $b->getPosition();
+                });
+                $parameters = [];
+                foreach ($params as $param) {
+                    $parameters[] = $param->getName();
                 }
-            }
-            foreach ($reflect->getMethods() as $method) {
-                if ($method->isProtected() && ($method->name !== ''))  {
-                    $params = $method->getParameters();
-                    usort($params, function($a, $b) {
-                        return $a->getPosition() > $b->getPosition();
-                    });
-                    $parameters = [];
-                    foreach ($params as $param) {
-                        $parameters[] = $param->getName();
-                    }
-                    $parameters = implode(', ', $parameters);
-                    $result .= "<div class='ddd-object-method ddd-hidden'><div class='ddd-object-method-visibility'><div class='ddd-protected'>protected</div></div><div class='ddd-object-method-name'>$method->name</div><div class='ddd-object-method-params'>($parameters)</div></div>";
+                $visibility = '';
+                if ($method->isPublic()) {
+                    $visibility = 'public';
+                } elseif ($method->isProtected()) {
+                    $visibility = 'protected';
+                } elseif ($method->isPrivate()) {
+                    $visibility = 'private';
                 }
-            }
-            foreach ($reflect->getMethods() as $method) {
-                if ($method->isPrivate() && ($method->name !== ''))  {
-                    $params = $method->getParameters();
-                    usort($params, function($a, $b) {
-                        return $a->getPosition() > $b->getPosition();
-                    });
-                    $parameters = [];
-                    foreach ($params as $param) {
-                        $parameters[] = $param->getName();
-                    }
-                    $parameters = implode(', ', $parameters);
-                    $result .= "<div class='ddd-object-method ddd-hidden'><div class='ddd-object-method-visibility'><div class='ddd-private'>private</div></div><div class='ddd-object-method-name'>$method->name</div><div class='ddd-object-method-params'>($parameters)</div></div>";
-                }
-            }
 
+                if ($method->isAbstract()) {
+                    $visibility .= ' abstract' ;
+                }
+                if ($method->isStatic()) {
+                    $visibility .= ' static';
+                }
+                $parameters = implode(', ', $parameters);
+                $result .= "<div class='ddd-object-method ddd-collapsible ddd-hidden'><div class='ddd-object-method-visibility'><div class='ddd-$visibility'>$visibility</div></div><div class='ddd-object-method-name'>{$method->getName()}</div><div class='ddd-object-method-params'>($parameters)</div></div>";
+            }
             $result .= '</div></div></div></div>';
             break;
         default:
