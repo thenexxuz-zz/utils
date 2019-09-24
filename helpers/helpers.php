@@ -35,6 +35,19 @@ function ddd(...$args)
         $lavender = '#ab9df2';
 
         switch ($mode) {
+            case 'custom':
+                $background = getenv('DDD_COLOR_BACKGROUND');
+                $textColor = getenv('DDD_COLOR_TEXT_COLOR');
+                $typeString = getenv('DDD_COLOR_TYPE_STRING');
+                $typeInteger = getenv('DDD_COLOR_TYPE_INTEGER');
+                $typeDouble = getenv('DDD_COLOR_TYPE_DOUBLE');
+                $typeBoolean = getenv('DDD_COLOR_TYPE_BOOLEAN');
+                $arrayEmpty = getenv('DDD_COLOR_ARRAY_EMPTY');
+                $visibilityPublic = getenv('DDD_COLOR_VISIBILITY_PUBLIC');
+                $visibilityProtected = getenv('DDD_COLOR_VISIBILITY_PROTECTED');
+                $visibilityPrivate = getenv('DDD_COLOR_VISIBILITY_PRIVATE');
+                $info = getenv('DDD_COLOR_INFO');
+                break;
             case 'light':
                 $background = $veryLightGray;
                 $textColor = $darkGray;

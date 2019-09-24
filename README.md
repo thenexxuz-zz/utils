@@ -7,13 +7,7 @@
 
 ## Helpers
 
-A few common helpers for debugging.
-* `ddd` - similar to Laravel's `dd()` command but not reliant on any Laravel packages with configurable color modes: `light`/`dark` just add environment variable `DEBUG_COLOR_MODE` or query parameter to the URL `?debug_color_mode` selecting color mode.
-* `lineNo` - just return the line number of where it was called.
-* `validGuid` - simple UUIDv4 validation.
-* `todayInDates` - pass an array of dates in `yyyy-mm-dd` format and returns true or false if today's date is in the array.
-* `removeTodayDate` - pass an array of dates in `yyyy-mm-dd` format and returns and array removing today's date if it's in the array.
-* `guidToHexInSql` - create the correct MySQL string to convert a UUID to BIN(16) hex.
+See the [helper readme](README-helpers.md)
 
 ## Classes
 ### MeasureTime
