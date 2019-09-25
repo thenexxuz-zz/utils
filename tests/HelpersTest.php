@@ -57,7 +57,7 @@ TEXT;
 
     public function testPrettyPrintObject()
     {
-        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(object)</div><div class="ddd-info">stdClass()</div></div><div class="ddd-type-object ddd-collapsible ddd-hidden"><div class="ddd-object-properties"><div class="ddd-object-title">Properties:</div><div class="ddd-object-property ddd-collapsible ddd-hidden">none</div></div><div class="ddd-object-methods"><div class="ddd-object-title">Methods:</div></div></div></div></div>';
+        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(object)</div><div class="ddd-info">stdClass()</div></div><div class="ddd-type-object ddd-collapsible ddd-hidden"><div class="ddd-object-properties"><div class="ddd-object-title">Properties:</div></div><div class="ddd-object-methods"><div class="ddd-object-title">Methods:</div><div class="ddd-object-method ddd-collapsible ddd-hidden">none</div></div></div></div></div>';
         $this->assertEquals(0, strcmp($expected, prettyPrint(new StdClass())));
     }
 
