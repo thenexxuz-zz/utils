@@ -356,60 +356,71 @@ function prettyPrint($X)
             $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(object)</div><div class="ddd-info">' . get_class($X) . '()</div></div><div class="ddd-type-object ddd-collapsible ddd-hidden">';
 
             $result .= '<div class="ddd-object-properties"><div class="ddd-object-title">Properties:</div>';
-            if (count($reflect->getProperties()) > 0) {
-                foreach ($reflect->getProperties() as $property) {
-                    //$propertyHoverText = str_replace(PHP_EOL, '</br>', $property->getDocComment());
-                    $result .= '<div class="ddd-object-property ddd-collapsible ddd-hidden"><div class="ddd-object-property-visibility">';
-                    if ($property->isPublic()) {
-                        $result .= '<div class="ddd-public">public</div>';
-                    } else if ($property->isProtected()) {
-                        $result .= '<div class="ddd-protected">protected</div>';
-                    } else {
-                        $result .= '<div class="ddd-private">private</div>';
-                    }
-                    $result .= '</div>';
-                    $value = null;
-                    foreach ((array)$X as $key => $val) {
-                        if (($property->name === $key) || (chr(0) . '*' . chr(0) . $property->name === $key)) {
-                            $value = $val;
-                            break;
-                        }
-                    }
-                    $result .= "<div class='ddd-object-property-name'>$property->name</div><div class='ddd-arrow'></div>" . prettyPrint($value);
-                    $result .= '</div>';
+
+            if (get_class($X) === 'stdClass') {
+                foreach (get_object_vars($X) as $key => $value) {
+                    $result .= "<div class='ddd-object-property ddd-collapsible ddd-hidden'><div class='ddd-object-property-visibility'><div class='ddd-public'>public</div></div><div class='ddd-object-property-name'>$key</div><div class='ddd-arrow'></div>" . prettyPrint($value) . "</div>";
                 }
             } else {
-                $result .= '<div class="ddd-object-property ddd-collapsible ddd-hidden">none</div>';
+                if (count($reflect->getProperties()) > 0) {
+                    foreach ($reflect->getProperties() as $property) {
+                        //$propertyHoverText = str_replace(PHP_EOL, '</br>', $property->getDocComment());
+                        $result .= '<div class="ddd-object-property ddd-collapsible ddd-hidden"><div class="ddd-object-property-visibility">';
+                        if ($property->isPublic()) {
+                            $result .= '<div class="ddd-public">public</div>';
+                        } else if ($property->isProtected()) {
+                            $result .= '<div class="ddd-protected">protected</div>';
+                        } else {
+                            $result .= '<div class="ddd-private">private</div>';
+                        }
+                        $result .= '</div>';
+                        $value = null;
+                        foreach ((array)$X as $key => $val) {
+                            if (($property->name === $key) || (chr(0) . '*' . chr(0) . $property->name === $key)) {
+                                $value = $val;
+                                break;
+                            }
+                        }
+                        $result .= "<div class='ddd-object-property-name'>$property->name</div><div class='ddd-arrow'></div>" . prettyPrint($value);
+                        $result .= '</div>';
+                    }
+                } else {
+                    $result .= '<div class="ddd-object-property ddd-collapsible ddd-hidden">none</div>';
+                }
             }
             $result .= '</div>';
 
             $result .= '<div class="ddd-object-methods"><div class="ddd-object-title">Methods:</div>';
-            foreach ($reflect->getMethods() as $method) {
-                $params = $method->getParameters();
-                usort($params, function($a, $b) {
-                    return $a->getPosition() > $b->getPosition();
-                });
-                $parameters = [];
-                foreach ($params as $param) {
-                    $parameters[] = $param->getName();
-                }
-                $visibility = '';
-                if ($method->isPublic()) {
-                    $visibility = 'public';
-                } elseif ($method->isProtected()) {
-                    $visibility = 'protected';
-                } elseif ($method->isPrivate()) {
-                    $visibility = 'private';
-                }
+            if (count($reflect->getMethods()) > 0) {
+                foreach ($reflect->getMethods() as $method) {
+                    $params = $method->getParameters();
+                    usort($params, function($a, $b) {
+                        return $a->getPosition() > $b->getPosition();
+                    });
+                    $parameters = [];
+                    foreach ($params as $param) {
+                        $parameters[] = $param->getName();
+                    }
+                    $visibility = '';
+                    if ($method->isPublic()) {
+                        $visibility = 'public';
+                    } elseif ($method->isProtected()) {
+                        $visibility = 'protected';
+                    } elseif ($method->isPrivate()) {
+                        $visibility = 'private';
+                    }
 
-                if ($method->isAbstract()) {
-                    $visibility .= ' abstract' ;
+                    if ($method->isAbstract()) {
+                        $visibility .= ' abstract' ;
+                    }
+                    if ($method->isStatic()) {
+                        $visibility .= ' static';
+                    }
+                    $parameters = implode(', ', $parameters);
+                    $result .= "<div class='ddd-object-method ddd-collapsible ddd-hidden'><div class='ddd-object-method-visibility'><div class='ddd-$visibility'>$visibility</div></div><div class='ddd-object-method-name'>{$method->getName()}</div><div class='ddd-object-method-params'>($parameters)</div></div>";
                 }
-                if ($method->isStatic()) {
-                    $visibility .= ' static';
-                }
-                $parameters = implode(', ', $parameters);
-                $result .= "<div class='ddd-object-method ddd-collapsible ddd-hidden'><div class='ddd-object-method-visibility'><div class='ddd-$visibility'>$visibility</div></div><div class='ddd-object-method-name'>{$method->getName()}</div><div class='ddd-object-method-params'>($parameters)</div></div>";
+            } else {
+                $result .= '<div class="ddd-object-method ddd-collapsible ddd-hidden">none</div>';
             }
             $result .= '</div></div></div></div>';
             break;
