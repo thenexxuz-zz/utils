@@ -33,6 +33,17 @@ function ddd(...$args)
         $lime = '#a9dc76';
         $lightBlue = '#78dce8';
         $lavender = '#ab9df2';
+        $animatedHotdog = '#ff0000';
+
+        $animatedHotdogKeyframes = "
+            @keyframes animatedHotdog {
+                0% {
+                    background: $red;
+                }
+                100% {
+                    background: $yellow;
+                }
+            }";
 
         switch ($mode) {
             case 'custom':
@@ -60,6 +71,19 @@ function ddd(...$args)
                 $visibilityProtected = $orange;
                 $visibilityPrivate = $red;
                 $info = $textColor;
+                break;
+            case 'hotdogStand':
+                $background = $animatedHotdog;
+                $textColor = $white;
+                $typeString = $black;
+                $typeInteger = $green;
+                $typeDouble = $orange;
+                $typeBoolean = $purple;
+                $arrayEmpty = $red;
+                $visibilityPublic = $green;
+                $visibilityProtected = $orange;
+                $visibilityPrivate = $black;
+                $info = $yellow;
                 break;
             default:
             case 'dark':
@@ -125,7 +149,9 @@ function ddd(...$args)
                 border: solid silver;
                 display: block;
                 font-size: 1em;
+                " . (($mode === 'hotdogStand')? 'animation: animatedHotdog 3s infinite alternate;': '') . "
             }
+            " . (($mode === 'hotdogStand')? $animatedHotdogKeyframes: '') . "
             .ddd-header {
                 background-color: $textColor;
                 color: $background;
@@ -260,6 +286,14 @@ function ddd(...$args)
                 color: $textColor;
             }
             </style>";
+        echo "<script>
+            window.ddd = {
+                args: [],
+                schema: [],
+                file: '$file',
+                lineNo: '{$source['line']}'
+            };
+        </script>";
         echo '<div class="ddd-output"><div class="ddd-header">';
     }
 
@@ -269,16 +303,22 @@ function ddd(...$args)
         echo '</div><div class="ddd-body">';
     }
 
-    foreach ($args as $X) {
+    $schema = (object)[];
+    foreach ($args as $key => $X) {
         if (isCommandLine()) {
             print_r($X);
         } else {
-            echo "<div class='ddd-args'>" . prettyPrint($X) . "</div>";
+            echo "<script>window.ddd.args[$key] = " . json_encode($X) . ";</script>" . PHP_EOL;
+            echo "<div class='ddd-args'>" . prettyPrint($X, $key, $schema) . "</div>" . PHP_EOL;
+            echo "<script>
+                window.ddd.schema = " . json_encode($schema) . ";
+            </script>" . PHP_EOL;
         }
     }
     if (!isCommandLine()) {
         echo "</div></div>";
-        echo "<script>
+        echo "
+            <script>
                 let _itemHeaders = document.querySelectorAll('.ddd-item-header, .ddd-object-title');
                 _itemHeaders.forEach(_itemHeader => {
                     _itemHeader.addEventListener('click', () => {
@@ -301,6 +341,8 @@ function ddd(...$args)
                         }
                     });
                 });
+
+                console.log('%c ! window.ddd will give you console access to the data ! ', 'background: #222; color: #bada55');
             </script>";
     }
 
@@ -314,8 +356,9 @@ function terminate($code)
     }
 }
 
-function prettyPrint($X)
+function prettyPrint($X, $parentKey, &$parent)
 {
+    $self = '';
     $result = '';
     if (count(debug_backtrace()) > 253) {
         $result = '<div class="ddd-max-recursion">Max recursion reached.</div>';
@@ -324,25 +367,31 @@ function prettyPrint($X)
     switch (gettype($X)) {
         case 'string':
             $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(string)</div><div class="ddd-type-string">' . turnUrlIntoAnchor($X) . '</div><div class="ddd-info">(length='.strlen($X).')</div></div></div>';
+            $self = 'String';
             break;
         case 'integer':
             $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(int)</div><div class="ddd-type-integer">' . $X . '</div></div></div>';
+            $self = 'Integer';
             break;
         case 'double':
         case 'float':
             $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(double)</div><div class="ddd-type-double">' . $X . '</div></div></div>';
+            $self = 'Double';
             break;
         case 'boolean':
             $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(boolean)</div><div class="ddd-type-boolean">' . ($X?'true':'false') . '</div></div></div>';
+            $self = 'Boolean';
             break;
         case 'NULL':
             $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type-null">NULL</div></div></div>';
+            $self = 'NULL';
             break;
         case 'array':
             $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(array)</div><div class="ddd-info">(size=' . count($X) . ')</div></div><div class="ddd-type-array ddd-collapsible ddd-hidden">';
+            $self = [];
             if (count($X) > 0) {
                 foreach ($X as $key => $val) {
-                    $result .= "<div class='ddd-array-member ddd-collapsible'><div class='ddd-array-key'>$key</div><div class='ddd-arrow'></div>" . prettyPrint($val) . "</div>";
+                    $result .= "<div class='ddd-array-member ddd-collapsible'><div class='ddd-array-key'>$key</div><div class='ddd-arrow'></div>" . prettyPrint($val, $key, $self) . "</div>";
                 }
             } else {
                 $result .= "<div class='ddd-array-member'><div class='ddd-array-empty'>Empty Array</div></div>";
@@ -353,13 +402,16 @@ function prettyPrint($X)
             $reflect = new ReflectionClass(get_class($X));
             $hoverText = "Name: $reflect->name</br>".($reflect->isInternal() ? '</br>Internal PHP Class':'').($reflect->getExtensionName() ? '</br>Extends: '.$reflect->getExtensionName():'').($reflect->getFileName() ? '</br>Defined: '.$reflect->getFileName():'');
 
-            $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(object)</div><div class="ddd-info">' . get_class($X) . '()</div></div><div class="ddd-type-object ddd-collapsible ddd-hidden">';
+            $className = explode(chr(0), get_class($X))[0];
+
+            $result .= '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(object)</div><div class="ddd-info">' . $className . '()</div></div><div class="ddd-type-object ddd-collapsible ddd-hidden">';
+            $self = (object) [];
 
             $result .= '<div class="ddd-object-properties"><div class="ddd-object-title">Properties:</div>';
 
             if (get_class($X) === 'stdClass') {
                 foreach (get_object_vars($X) as $key => $value) {
-                    $result .= "<div class='ddd-object-property ddd-collapsible ddd-hidden'><div class='ddd-object-property-visibility'><div class='ddd-public'>public</div></div><div class='ddd-object-property-name'>$key</div><div class='ddd-arrow'></div>" . prettyPrint($value) . "</div>";
+                    $result .= "<div class='ddd-object-property ddd-collapsible ddd-hidden'><div class='ddd-object-property-visibility'><div class='ddd-public'>public</div></div><div class='ddd-object-property-name'>$key</div><div class='ddd-arrow'></div>" . prettyPrint($value, $key, $self) . "</div>";
                 }
             } else {
                 if (count($reflect->getProperties()) > 0) {
@@ -381,7 +433,7 @@ function prettyPrint($X)
                                 break;
                             }
                         }
-                        $result .= "<div class='ddd-object-property-name'>$property->name</div><div class='ddd-arrow'></div>" . prettyPrint($value);
+                        $result .= "<div class='ddd-object-property-name'>$property->name</div><div class='ddd-arrow'></div>" . prettyPrint($value, $property->name, $self);
                         $result .= '</div>';
                     }
                 } else {
@@ -426,6 +478,13 @@ function prettyPrint($X)
             break;
         default:
             $result .= '';
+    }
+
+    if (is_array($parent)) {
+        $parent[$parentKey] = $self;
+    } elseif (is_object($parent)) {
+        $parentKey = str_replace(chr(0), '', $parentKey);
+        $parent->{$parentKey} = $self;
     }
 
     return $result;
