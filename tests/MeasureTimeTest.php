@@ -1,6 +1,6 @@
 <?php
 
-use AiBUY\Utils\MeasureTime;
+use TheNexxuz\Utils\MeasureTime;
 use PHPUnit\Framework\TestCase;
 
 /**

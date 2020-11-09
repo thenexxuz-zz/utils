@@ -1,9 +1,9 @@
-# AiBUY Utils
+# TheNexxuz Utils
 
-[![Build Status](https://travis-ci.com/aibuy-inc/utils.svg)](https://travis-ci.com/aibuy-inc/utils)
-![PHP from Packagist](https://img.shields.io/packagist/php-v/aibuy/utils)
-![Packagist Version](https://img.shields.io/packagist/v/aibuy/utils)
-![Packagist](https://img.shields.io/packagist/l/aibuy/utils)
+[![Build Status](https://travis-ci.com/thenexxuz/utils.svg)](https://travis-ci.com/thenexxuz/utils)
+![PHP from Packagist](https://img.shields.io/packagist/php-v/thenexxuz/utils)
+![Packagist Version](https://img.shields.io/packagist/v/thenexxuz/utils)
+![Packagist](https://img.shields.io/packagist/l/thenexxuz/utils)
 
 ## Helpers
 
@@ -37,11 +37,11 @@ Create a PID file and lock out running the script multiple times.
 
 #### Installation
 
-```composer require aibuy/utils```
+```composer require thenexxuz/utils```
 
 #### Usage
 
-Add `use AiBuy\Utils\ProcessId;` to your file.
+Add `use TheNexxuz\Utils\ProcessId;` to your file.
 
 Within your code add the following to the start of your script.
 ```

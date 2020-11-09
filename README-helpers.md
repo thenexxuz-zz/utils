@@ -1,9 +1,9 @@
-# AiBUY Utils - Helpers
+# TheNexxuz Utils - Helpers
 
-[![Build Status](https://travis-ci.com/aibuy-inc/utils.svg)](https://travis-ci.com/aibuy-inc/utils)
-![PHP from Packagist](https://img.shields.io/packagist/php-v/aibuy/utils)
-![Packagist Version](https://img.shields.io/packagist/v/aibuy/utils)
-![Packagist](https://img.shields.io/packagist/l/aibuy/utils)
+[![Build Status](https://travis-ci.com/thenexxuz-inc/utils.svg)](https://travis-ci.com/thenexxuz/utils)
+![PHP from Packagist](https://img.shields.io/packagist/php-v/thenexxuz/utils)
+![Packagist Version](https://img.shields.io/packagist/v/thenexxuz/utils)
+![Packagist](https://img.shields.io/packagist/l/thenexxuz/utils)
 
 ## Helpers
 A few common helpers for debugging.

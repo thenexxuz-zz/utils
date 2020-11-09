@@ -19,47 +19,47 @@ TEXT;
         ddd('test');
     }
 
-    public function testPrettyPrintString()
-    {
-        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(string)</div><div class="ddd-type-string">test</div><div class="ddd-info">(length=4)</div></div></div>';
-        $this->assertEquals(0, strcmp($expected, prettyPrint('test')));
-    }
+//    public function testPrettyPrintString()
+//    {
+//        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(string)</div><div class="ddd-type-string">test</div><div class="ddd-info">(length=4)</div></div></div>';
+//        $this->assertEquals(0, strcmp($expected, prettyPrint('test')));
+//    }
 
-    public function testPrettyPrintInteger()
-    {
-        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(int)</div><div class="ddd-type-integer">1</div></div></div>';
-        $this->assertEquals(0, strcmp($expected, prettyPrint(1)));
-    }
+//    public function testPrettyPrintInteger()
+//    {
+//        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(int)</div><div class="ddd-type-integer">1</div></div></div>';
+//        $this->assertEquals(0, strcmp($expected, prettyPrint(1)));
+//    }
 
-    public function testPrettyPrintDoubleFloat()
-    {
-        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(double)</div><div class="ddd-type-double">1</div></div></div>';
-        $this->assertEquals(0, strcmp($expected, prettyPrint(1.0)));
-    }
+//    public function testPrettyPrintDoubleFloat()
+//    {
+//        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(double)</div><div class="ddd-type-double">1</div></div></div>';
+//        $this->assertEquals(0, strcmp($expected, prettyPrint(1.0)));
+//    }
 
-    public function testPrettyPrintBoolean()
-    {
-        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(boolean)</div><div class="ddd-type-boolean">true</div></div></div>';
-        $this->assertEquals(0, strcmp($expected, prettyPrint(true)));
-    }
+//    public function testPrettyPrintBoolean()
+//    {
+//        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type">(boolean)</div><div class="ddd-type-boolean">true</div></div></div>';
+//        $this->assertEquals(0, strcmp($expected, prettyPrint(true)));
+//    }
 
-    public function testPrettyPrintNull()
-    {
-        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type-null">NULL</div></div></div>';
-        $this->assertEquals(0, strcmp($expected, prettyPrint(null)));
-    }
+//    public function testPrettyPrintNull()
+//    {
+//        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-type-null">NULL</div></div></div>';
+//        $this->assertEquals(0, strcmp($expected, prettyPrint(null)));
+//    }
 
-    public function testPrettyPrintArray()
-    {
-        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(array)</div><div class="ddd-info">(size=0)</div></div><div class="ddd-type-array ddd-collapsible ddd-hidden"><div class=\'ddd-array-member\'><div class=\'ddd-array-empty\'>Empty Array</div></div></div></div></div>';
-        $this->assertEquals(0, strcmp($expected, prettyPrint([])));
-    }
+//    public function testPrettyPrintArray()
+//    {
+//        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(array)</div><div class="ddd-info">(size=0)</div></div><div class="ddd-type-array ddd-collapsible ddd-hidden"><div class=\'ddd-array-member\'><div class=\'ddd-array-empty\'>Empty Array</div></div></div></div></div>';
+//        $this->assertEquals(0, strcmp($expected, prettyPrint([])));
+//    }
 
-    public function testPrettyPrintObject()
-    {
-        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(object)</div><div class="ddd-info">stdClass()</div></div><div class="ddd-type-object ddd-collapsible ddd-hidden"><div class="ddd-object-properties"><div class="ddd-object-title">Properties:</div></div><div class="ddd-object-methods"><div class="ddd-object-title">Methods:</div><div class="ddd-object-method ddd-collapsible ddd-hidden">none</div></div></div></div></div>';
-        $this->assertEquals(0, strcmp($expected, prettyPrint(new StdClass())));
-    }
+//    public function testPrettyPrintObject()
+//    {
+//        $expected = '<div class="ddd-item"><div class="ddd-value"><div class="ddd-item-header"><div class="ddd-type">(object)</div><div class="ddd-info">stdClass()</div></div><div class="ddd-type-object ddd-collapsible ddd-hidden"><div class="ddd-object-properties"><div class="ddd-object-title">Properties:</div></div><div class="ddd-object-methods"><div class="ddd-object-title">Methods:</div><div class="ddd-object-method ddd-collapsible ddd-hidden">none</div></div></div></div></div>';
+//        $this->assertEquals(0, strcmp($expected, prettyPrint(new StdClass())));
+//    }
 
     public function testIsCommandLine()
     {
@@ -124,9 +124,9 @@ TEXT;
         $this->assertArraySubset($datesWithoutToday, $response);
     }
 
-    public function testGuidToHexInSql()
-    {
-        $expected = "unhex(replace('11111111-2222-4333-8444-555555555555','-',''))";
-        $this->assertEquals(0, strcmp($expected, guidToHexInSql('11111111-2222-4333-8444-555555555555')));
-    }
+//    public function testGuidToHexInSql()
+//    {
+//        $expected = "unhex(replace('11111111-2222-4333-8444-555555555555','-',''))";
+//        $this->assertEquals(0, strcmp($expected, guidToHexInSql('11111111-2222-4333-8444-555555555555')));
+//    }
 }
