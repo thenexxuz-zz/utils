@@ -1,11 +1,11 @@
 <?php
 
-use AiBUY\Utils\ProcessId;
+use TheNexxuz\Utils\ProcessId;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \AiBUY\Utils\ProcessId
- * @uses \AiBUY\Utils\ProcessId
+ * @covers \TheNexxuz\Utils\ProcessId
+ * @uses \TheNexxuz\Utils\ProcessId
  */
 class ProcessIdTest extends TestCase
 {

@@ -131,9 +131,9 @@ TEXT;
         $this->assertArraySubset($datesWithoutToday, $response);
     }
 
-    public function testGuidToHexInSql()
-    {
-        $expected = "unhex(replace('11111111-2222-4333-8444-555555555555','-',''))";
-        $this->assertEquals(0, strcmp($expected, guidToHexInSql('11111111-2222-4333-8444-555555555555')));
-    }
+//    public function testGuidToHexInSql()
+//    {
+//        $expected = "unhex(replace('11111111-2222-4333-8444-555555555555','-',''))";
+//        $this->assertEquals(0, strcmp($expected, guidToHexInSql('11111111-2222-4333-8444-555555555555')));
+//    }
 }

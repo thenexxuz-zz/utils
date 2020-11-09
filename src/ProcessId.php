@@ -1,6 +1,6 @@
 <?php
 
-namespace AiBUY\Utils;
+namespace TheNexxuz\Utils;
 
 use Exception;
 

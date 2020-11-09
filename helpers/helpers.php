@@ -578,5 +578,5 @@ function removeTodayDate($dates)
  */
 function guidToHexInSql($guid)
 {
-    return "unhex(replace('$guid','-',''))";
+    return "uuid_to_bin('$guid')";
 }

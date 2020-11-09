@@ -1,6 +1,6 @@
 <?php
 
-namespace AiBUY\Utils;
+namespace TheNexxuz\Utils;
 
 /**
  * Use this class to measure response time when debugging or to include time in your API responses
